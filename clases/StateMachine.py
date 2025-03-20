@@ -26,6 +26,7 @@ class StateMachine(State):
             self.states[self.curentState].End()
             self.curentState=newState
             self.states[self.curentState].Start()
+            print("acciones ", actions[0], actions[1])
         return actions
     
 

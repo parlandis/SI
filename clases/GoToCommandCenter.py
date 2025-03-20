@@ -39,10 +39,15 @@ class GoToCommandCenter(State):
 
             if self._bala_en_direccion_actual(perception):
                 return "Shot"  # Disparar si la bala viene hacia nosotros
-            else:
-                return "Change"  # Esquivar cambiando de dirección
+            else :
+                dirB = self.dirBala(perception)
+                if perception[dirB + 3] > 4:
+                    return "Avoid"
+                else : 
+                    return "Change"  # Esquivar cambiando de dirección
         # 2. Lógica para jugador (segunda prioridad)
         if self.jugador(perception):
+            print("jugador encontrado")
             jugador_dir = self.dirJugador(perception)
             if jugador_dir == (self.target_direction - 1):  # Jugador en dirección actual
                 return "Shot"

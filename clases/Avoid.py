@@ -10,17 +10,13 @@ class Avoid(State):
         self.target_direction = None
 
     def Update(self, perception, orientation):
-        """
-        perception: lista con la percepción del entorno según la estructura dada.
-        orientation: dirección actual del tanque ('N', 'S', 'E', 'O')
-
-        Devuelve una acción de esquiva basada en la percepción.
-        """
-        
+        print("[Avoid] Update:")
         self.target_direction = orientation
         # Índices de los elementos de percepción relevantes
         UP, DOWN, RIGHT, LEFT = 0, 1, 2, 3
         
+
+
 
         # Detectar si hay un obstáculo irrompible justo en frente
         obstaculo_frente = perception[self.target_direction - 1] == 1 and perception[self.target_direction + 3] <= 1
@@ -46,16 +42,13 @@ class Avoid(State):
             action = self.target_direction  # Si no hay obstáculos en frente, avanzar
 
         print(f"Acción elegida en Avoid: {action}")
-        return action, True  # `True` indica que sigue en el mismo estado
+        return action, False  # `True` indica que sigue en el mismo estado
 
     def Transit(self, perception, orientation):
-        """
-        Define si el estado debe cambiar a 'GoToCommandCenter'.
-        Se cambia cuando ya no hay obstáculos en frente.
-        """
-        if perception[0] == 0:  # Si ya no hay obstáculo en frente
-            return "GoToCommandCenter"
-        return "Avoid"
+        print("[Avoid] Transit:")
+       
+        return "GoToCommandCenter"
+        
 
     def End(self):
         print("Fin del estado de esquivar")

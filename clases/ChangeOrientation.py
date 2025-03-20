@@ -13,59 +13,40 @@ class Change(State):
 
     #Metodo que se llama en cada actualización del estado
     #devuelve las acciones (actuadores) que el agente realiza
-    def Update(self, perception):
-        direcciones = []  # Inicializar fuera del bloque if
+    def Update(self, perception, orientation):
 
-        if self.target_orientation is None:
-            for i in range(4):
-                if perception[i] == 1:  # Ignorar direcciones bloqueadas
-                    continue
-
-                # Prioridades según el tipo de objeto detectado
-                if perception[i] == 4:   # Jugador
-                    direcciones.append((10, i))
-                elif perception[i] == 3: # Command Center
-                    direcciones.append((9, i))
-                elif perception[i] == 2: # Ladrillo
-                    direcciones.append((8, i))
-                elif perception[i] == 0: # Vacío
-                    direcciones.append((7, i))
-
-            # Ordenar por prioridad (mayor primero)
-            if direcciones:
-                direcciones.sort(reverse=True)
-                self.target_orientation = direcciones[0][1]
-            else:
-                # Si todas están bloqueadas, elegir una dirección circular
-                current_dir = int(perception[12] % 4)  # perception[12] = AGENT_X
-                self.target_orientation = (current_dir + 1) % 4 + 1
-
-        # Retornar la acción y si disparar
-        should_fire = perception[self.target_orientation - 1] == 2
-        return self.target_orientation, should_fire
+        
+        dir_peligro  = self.peligro(perception)
+        print(f"{dir_peligro}")
+        if dir_peligro == None:
+            return 0, False
+        else:
+            return dir_peligro, False
     
     #método que se llama para decidir la transición del estado. Devuelve el id del estado nuevo
-def Transit(self, perception, orientation):
-    if orientation == self.target_orientation:
-        # Corregir índice: perception[0-3] corresponde a direcciones 1-4
-        obstaculo = perception[orientation - 1]  # Índice ajustado
+    def Transit(self, perception, orientation):
+        print("[Change] Transit:")
 
-        if obstaculo == 1:  # UNBREAKABLE (pared indestructible)
-            self.id = "GoToCommandCenter"  # No se puede avanzar, volver al estado principal
-        elif obstaculo in [2, 5]:  # BRICK (ladrillo)
-            self.id = "Shot"  # Disparar para destruirlo
-        elif obstaculo in [3, 4]:  # COMMAND_CENTER o PLAYER
-            self.id = "Shot"  # Disparar al objetivo
-        else:  # Vacío (0) u otro
-            self.id = "GoToCommandCenter"  # Continuar movimiento
-    else:
-        # Seguir intentando alcanzar la orientación objetivo
-        self.id = "Change"
+        """ if orientation == self.target_orientation:
+            # Corregir índice: perception[0-3] corresponde a direcciones 1-4
+            obstaculo = perception[orientation - 1]  # Índice ajustado
 
-    return self.id
+            if obstaculo == 1:  # UNBREAKABLE (pared indestructible)
+                self.id = "Avoid"  # No se puede avanzar, volver al estado principal
+            elif obstaculo in [2, 5,3, 4 ]:  # BRICK (ladrillo) o bala
+                self.id = "Shot"  # Disparar para destruirlo
+        
+            # Seguir intentando alcanzar la orientación objetivo
+            self.id = "GoToCommandCenter"""
+
+        return "Shot"
 
   
-         
+    def peligro(self, perception):
+        for i in range(4):
+            if perception[i] in [5, 6]:
+                return i 
+
             
     
     #Metodo que se llama al finalizar el estado
