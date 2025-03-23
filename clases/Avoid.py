@@ -6,7 +6,7 @@ class Avoid(State):
         self.target_direction = None
 
     def Start(self):
-        print("Inicio del estado de esquivar")
+        print("[Avoid] Incio")
         self.target_direction = None
 
     def Update(self, perception, orientation):

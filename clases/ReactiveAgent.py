@@ -4,6 +4,8 @@ from GoToCommandCenter import GoToCommandCenter
 from Shot import Shot
 from Avoid import Avoid
 from ChangeOrientation import Change
+from CC2 import CC2
+from Combate import Combate
 
 class ReactiveAgent(BaseAgent):
 
@@ -13,10 +15,12 @@ class ReactiveAgent(BaseAgent):
         "GoToCommandCenter" : GoToCommandCenter("GoToCommandCenter"),
         "Shot" : Shot("Shot"),
         "Avoid" : Avoid("Avoid"),
-        "Change" : Change("Change")
+        "Change" : Change("Change"),
+        "CC2" : CC2("CC2"),
+        "Combate": Combate("Combate")
         }
         orientation = 2    #orientacion inicial hacia abajo
-        self.stateMachine = StateMachine("ReactiveBehavior",dictionary,"GoToCommandCenter", orientation)
+        self.stateMachine = StateMachine("ReactiveBehavior",dictionary,"CC2", orientation)
 
     #Metodo que se llama al iniciar el agente. No devuelve nada y sirve para contruir el agente
     def Start(self):

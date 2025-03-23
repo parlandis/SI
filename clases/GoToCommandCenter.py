@@ -17,10 +17,23 @@ class GoToCommandCenter(State):
         
 
     def Update(self, perception, orientation):
+        print("[GoToCommandCenter] Update")
+        #if self.target_direction is None:
+        self.target_direction = self.dirCC(perception)
+        print(f"[GoToCommandCenter] Dirección recalculada: {self.target_direction}")
+
+        if self.jugador(perception):
+            dirJ = self.dirJugador(perception)
+            if (dirJ == (self.target_direction - 1)):
+                print("[GoToCommandCenter] Jugador en nuestra Dir : Shot")
+            return self.target_direction, True
+    
         
-        if self.target_direction is None:
-            self.target_direction = self.dirCC(perception)
-            print(f"[GoToCommandCenter] Dirección recalculada: {self.target_direction}")
+        if self.jugador(perception):
+            if (self.dirJugador(perception) == (self.target_direction - 1)):
+                return self.target_direction, True
+            else:
+                return self.target_direction, False
 
         return self.target_direction, False
 
@@ -28,9 +41,10 @@ class GoToCommandCenter(State):
 
     def Transit(self, perception, orientation):
         #action = self.dirCC(perception)
-        print("Transit de CC")
-
+        print("[GoToCommandCenter] Transit")
+        
         if perception[self.target_direction - 1] == 3:
+            print(f"[GoToCommandCenter] CC encontrada a tiro: { perception[self.target_direction - 1] }")
             return "Shot"
 
         # 1. Lógica para balas (prioridad máxima)
@@ -47,8 +61,8 @@ class GoToCommandCenter(State):
                     return "Change"  # Esquivar cambiando de dirección
         # 2. Lógica para jugador (segunda prioridad)
         if self.jugador(perception):
-            print("jugador encontrado")
             jugador_dir = self.dirJugador(perception)
+            print(f"[GoToCommandCenter] jugador encontrado en direccion: { perception[jugador_dir - 1] }")
             if jugador_dir == (self.target_direction - 1):  # Jugador en dirección actual
                 return "Shot"
             else:
@@ -119,8 +133,8 @@ class GoToCommandCenter(State):
         dy = perception[11] - perception[13]  # CC_Y - AGENT_Y
 
 
-        print(f"[GoToCommandCenter] dx es: { dx }")
-        print(f"[GoToCommandCenter] dy es: { dy }")
+        #print(f"[GoToCommandCenter] dx es: { dx }")
+        #print(f"[GoToCommandCenter] dy es: { dy }")
         # Lógica mejorada para evitar oscilaciones
         if abs(dx) < abs(dy):
             self.last_axis = "Y"

@@ -27,17 +27,6 @@ class Change(State):
     def Transit(self, perception, orientation):
         print("[Change] Transit:")
 
-        """ if orientation == self.target_orientation:
-            # Corregir índice: perception[0-3] corresponde a direcciones 1-4
-            obstaculo = perception[orientation - 1]  # Índice ajustado
-
-            if obstaculo == 1:  # UNBREAKABLE (pared indestructible)
-                self.id = "Avoid"  # No se puede avanzar, volver al estado principal
-            elif obstaculo in [2, 5,3, 4 ]:  # BRICK (ladrillo) o bala
-                self.id = "Shot"  # Disparar para destruirlo
-        
-            # Seguir intentando alcanzar la orientación objetivo
-            self.id = "GoToCommandCenter"""
 
         return "Shot"
 
