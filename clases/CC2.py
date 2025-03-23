@@ -57,7 +57,7 @@ class CC2(State):
        
         self.movs_consecutivos += 1
 
-        if self.movs_consecutivos >= 3:
+        if self.movs_consecutivos >= 4:
            print("[CC2] Sin progreso. Recalculando...")
            self.target_direction = self.dirCC(perception)
            self.movs_consecutivos = 0
@@ -65,6 +65,7 @@ class CC2(State):
         if self.irrompible_en_dir(perception):
             print("[CC2] Obstáculo irrompible. Forzando recálculo...")
             self.target_direction = self.dirCC(perception)
+            self.movs_consecutivos = 0
             return self.id  # Permanece en CC2 pero con nueva dirección
 
         return self.id
@@ -144,10 +145,10 @@ class CC2(State):
                     return 1, True
                 elif perception[LEFT] != 1: 
                     print("Esquivando irrompible por la izquierda")
-                    action = 2
+                    return 2, True
                 elif perception[RIGHT] != 0: 
                     print("Esquivando irrompible por la derecha")
-                    action = 1
+                    return  1, True
                 else:
                     action = 0  # Si está completamente atrapado, detenerse
             else: 
@@ -160,7 +161,7 @@ class CC2(State):
                     action = 3
                 elif perception[DOWN] != 1:  # Si no hay espacio lateral, intenta retroceder
                     print("Esquivando irrompible por abajo")
-                    action = 2
+                    return 2, True
                 elif perception[UP] != 0:  # Si no hay espacio lateral, intenta retroceder
                     print("Esquivando irrompible por arriba")
                     action = 1
@@ -196,6 +197,8 @@ class CC2(State):
         else:
             self.last_axis = "X"
             return 3 if dx > 0 else 4
+        
+        
                 
     
     def jugadorCerca(self, perception):

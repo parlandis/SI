@@ -48,7 +48,7 @@ class Combate(State):
         if perception[self.target_direction -1] == 1:
             print["[Combate]: Irrompible"]
             self.target_direction = self.Buscar(perception)
-            return "Combate"
+            
         
         return "Combate"
 
@@ -77,13 +77,13 @@ class Combate(State):
         tipo_obstaculo = perception[self.target_direction - 1]
         distancia = perception[self.target_direction + 3]
         
-        if tipo_obstaculo == 2 and distancia < 1.5:  # BRICK
+        if tipo_obstaculo == 2 and distancia < 1.5: 
             print("[Combate] ¡Ladrillo detectado! Disparando...")
             return 0, True
-        elif tipo_obstaculo == 1 and distancia < 1:  # METAL
+        elif tipo_obstaculo == 1 and distancia < 1: 
             print("[Combate] ¡Obstáculo irrompible! Recalculando ruta...")
 
-              # Prioridad: Intentar moverse lateralmente
+              # Damos prioridad a movernos lateralmente
             if perception[LEFT] != 1:  # Si a la izquierda está libre
                 print("Esquivando irrompible por la izquierda")
                 action = 4
