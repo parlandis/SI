@@ -18,6 +18,25 @@ class AStar:
         #GetSucesorInOpen(sucesor) nos devolverá None si no lo encuentra, si lo encuentra
         #es que ese sucesor ya está en la frontera de exploración, DEBEMOS MIRAR SI EL NUEVO COSTE ES MENOR QUE EL QUE TENIA ALMACENADO
         #SI esto es asi, hay que cambiarle el padre y setearle el nuevo coste.
+
+        while self.open and not findGoal:
+            #sacamos el nodo con menor coste de la frontera de exploración
+            node = self.open.pop(0)
+            #si es la meta, reconstruimos el path y salimos
+            if self.problem.IsASolution(node):
+                findGoal = True
+                path = self.ReconstructPath(node)
+                return path[::-1]
+
+
+
+
+
+
+
+
+
+
         self.open.clear()
         self.precessed.clear()
         self.open.append(self.problem.Initial())

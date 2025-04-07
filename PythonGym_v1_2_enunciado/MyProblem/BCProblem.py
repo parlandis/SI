@@ -33,8 +33,10 @@ class BCProblem(Problem):
 
     #Calcula la heuristica del nodo en base al problema planteado (Se necesita reimplementar)
     def Heuristic(self, node):
+        #TODO: heurística del nodo
+        
         return abs(node.x - self.goal.x) + abs(node.y - self.goal.y)
-
+    
     #Genera la lista de sucesores del nodo (Se necesita reimplementar)
     def GetSucessors(self, node):
         successors = []
@@ -48,7 +50,7 @@ class BCProblem(Problem):
                 if coste != sys.maxsize:    #Si no tenemos coste maxino se puede mover uno
                     successor = BCNode(node, coste, valor, nx, ny)
                     successors.append(successor)
-        print("Creo que esta todo aqui:) ")
+        print("Creo que esta todo aqui ")
         return successors
     
     #métodos estáticos
@@ -98,29 +100,32 @@ class BCProblem(Problem):
         return x, invY
 
     #se utiliza para calcular el coste de cada elemento del mapa 
-    @staticmethod 
-    def GetCost(value): # valores privisionales 
-        print("Costes prov")
-        if value == AgentConsts.NOTHING: 
-            return 0
-        elif value == AgentConsts.UNBREAKABLE:
+    @staticmethod
+    def GetCost(value):
+        #TODO: debes darle un coste a cada tipo de casilla del mapa.
+        # costes provisionales 
+        if value == AgentConsts.UNBREAKABLE:
             return sys.maxsize
-        elif value == AgentConsts.BRICK: 
-            return 2
-        elif value == AgentConsts.COMMAND_CENTER:
+        elif value == AgentConsts.SEMI_UNBREKABLE:
+            return 10
+        elif value == AgentConsts.SEMI_BREKABLE:
+            return 5
+        elif value == AgentConsts.NOTHING:    
             return 1
         elif value == AgentConsts.PLAYER:
             return 2
-        elif value == AgentConsts.SHELL: #no se que hacer con las balas 
+        elif value == AgentConsts.COMMAND_CENTER:
+            return 1
+        elif value == AgentConsts.BRICK:
+            return 1
+        elif value == AgentConsts.SHELL:
             return 2
-        elif value == AgentConsts.OTHER: #No se que es otehr
+        elif value == AgentConsts.OTHER:
+            return 2
+        elif value == AgentConsts.LIFE:
             return 1
-        elif value == AgentConsts.LIFE: 
-            return 1
-        elif value == AgentConsts.SEMI_BREKABLE: 
-            return 4
-        elif value == AgentConsts.SEMI_UNBREKABLE:
-            return sys.maxsize
+
+        return sys.maxsize
     
     #crea un nodo y lo añade a successors (lista) con el padre indicado y la posición x,y en coordenadas mapa 
     def CreateNode(self,successors,parent,x,y):

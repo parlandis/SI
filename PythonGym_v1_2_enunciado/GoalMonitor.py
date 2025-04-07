@@ -29,7 +29,7 @@ class GoalMonitor:
             return True
         
         if any(perception[i] == AgentConsts.PLAYER for i in range(4)): 
-            return tur
+            return True
 
         #TODO definir la estrategia de cuando queremos recalcular
         #puede ser , por ejemplo cada cierto tiempo o cuanod tenemos poca vida.
@@ -39,13 +39,13 @@ class GoalMonitor:
     def SelectGoal(self, perception, map, agent):
         #TODO definir la estrategia del cambio de meta
         if self.CC_atiro(perception):
-            return self.goals[self.goal(0)]
+            return self.goals[self.GOAL_COMMAND_CENTRER]
         else:
             if self.player(perception):
-                return self.goals[self.goal(1)]
+                return self.goals[self.GOAL_LIFE]
         
             if(perception[AgentConsts.HEALTH] < 2 ):
-                return self.goals[self.goal(2)]
+                return self.goals[self.GOAL_PLAYER]
         
             
         return self.goals[self.goal(0)]

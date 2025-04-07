@@ -68,8 +68,17 @@ class GoalOrientedAgent(BaseAgent):
             #-le damos el modo inicial _CreateInitialNode
             #-establecer la meta actual al problema para que A* sepa cual es.
             #-Calcular el plan usando A*
-            print("TODO aqui faltan cosas :)")
-        return self.aStar.GetPlan()
+            currentGoal = self.goalMonitor.SelectGoal(perception,map,self)
+            self.problem.SetGoal(currentGoal)
+
+            initialNode = self._CreateInitialNode(perception)
+            self.problem.SetInitialNode(initialNode)
+            return self.aStar.GetPlan()
+            
+            print("Plan creado")
+        return []
+    
+        
         
     @staticmethod
     def CreateNodeByPerception(perception, value, perceptionID_X, perceptionID_Y,ySize):
@@ -100,11 +109,19 @@ class GoalOrientedAgent(BaseAgent):
         # - inicializamos el mapa problem.InitMap
         # - inicializamos A*
         # - creamos un plan inicial
-        print("TODO aqui faltan cosas :)")
+        self.problem = BCProblem(None, None, map)
+        self.problem.InitMap(map)
+        self.aStar = AStar(self.problem)
+
+        
         goal1CommanCenter = None
         goal2Life = self._CreateLifeGoal(perception)
         goal3Player = self._CreatePlayerGoal(perception)
         self.goalMonitor = GoalMonitor(self.problem,[goal1CommanCenter,goal2Life,goal3Player])
+        
+        self.goalMonitor = GoalMonitor(self.problem,[goal1CommanCenter,goal2Life,goal3Player])
+        self.plan = self._CreatePlan(perception, map)
+        print("Agente creado :)")
 
     #muestra un plan por consola
     @staticmethod
