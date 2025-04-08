@@ -41,8 +41,8 @@ class GoalOrientedAgent(BaseAgent):
     #Metodo que se llama en cada actualización del agente, y se proporciona le vector de percepciones
     #Devuelve la acción u el disparo si o no
     def Update(self, perception, map):
-        if perception == True or perception == False:
-            return 0,True
+        #if perception == True or perception == False:
+         #   return 0,True
         #inicializamos el agente (no lo podemos hacer en el start porque no tenemos el mapa)
         if not self.agentInit:
             self.InitAgent(perception,map)
@@ -53,6 +53,9 @@ class GoalOrientedAgent(BaseAgent):
 
         #Actualizamos el plan refrescando la posición del player (meta 2)
         goal3Player = self._CreatePlayerGoal(perception)
+
+
+
         self.goalMonitor.UpdateGoals(goal3Player,2)
         if self.goalMonitor.NeedReplaning(perception,map,self):
             self.problem.InitMap(map) ## refrescamos el mapa
@@ -71,8 +74,12 @@ class GoalOrientedAgent(BaseAgent):
             currentGoal = self.goalMonitor.SelectGoal(perception,map,self)
             self.problem.SetGoal(currentGoal)
 
+
             initialNode = self._CreateInitialNode(perception)
-            self.problem.SetInitialNode(initialNode)
+            self.problem.SetInitial(initialNode)
+
+
+
             return self.aStar.GetPlan()
             
             print("Plan creado")
@@ -109,18 +116,23 @@ class GoalOrientedAgent(BaseAgent):
         # - inicializamos el mapa problem.InitMap
         # - inicializamos A*
         # - creamos un plan inicial
-        self.problem = BCProblem(None, None, map)
-        self.problem.InitMap(map)
-        self.aStar = AStar(self.problem)
-
-        
-        goal1CommanCenter = None
+        goal1CommanCenter = self._CreateDefaultGoal(perception)
         goal2Life = self._CreateLifeGoal(perception)
         goal3Player = self._CreatePlayerGoal(perception)
-        self.goalMonitor = GoalMonitor(self.problem,[goal1CommanCenter,goal2Life,goal3Player])
+        inicial = self._CreateInitialNode(perception)
+        self.problem = BCProblem(inicial, goal1CommanCenter, len(map), len(map) )
+        self.problem.InitMap(map)
+        self.goalMonitor = GoalMonitor(self.problem,[goal1CommanCenter,goal2Life, goal3Player])
         
-        self.goalMonitor = GoalMonitor(self.problem,[goal1CommanCenter,goal2Life,goal3Player])
+       
+        
+        
+        self.aStar = AStar(self.problem)
+
         self.plan = self._CreatePlan(perception, map)
+
+
+        
         print("Agente creado :)")
 
     #muestra un plan por consola

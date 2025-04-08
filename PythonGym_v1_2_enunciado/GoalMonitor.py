@@ -20,9 +20,11 @@ class GoalMonitor:
     def NeedReplaning(self, perception, map, agent):
         if self.recalculate:
             self.lastTime = perception[AgentConsts.TIME]
+
             return True
         
         if perception[AgentConsts.TIME] - self.lastTime > 5: #si pasa mucho recalculamos 
+            self.UpdateGoals(self.SelectGoal(), )
             return True
         
         if perception[AgentConsts.HEALTH] < 2:
@@ -37,18 +39,19 @@ class GoalMonitor:
     
     #selecciona la meta mas adecuada al estado actual
     def SelectGoal(self, perception, map, agent):
-        #TODO definir la estrategia del cambio de meta
-        if self.CC_atiro(perception):
-            return self.goals[self.GOAL_COMMAND_CENTRER]
-        else:
-            if self.player(perception):
-                return self.goals[self.GOAL_LIFE]
-        
-            if(perception[AgentConsts.HEALTH] < 2 ):
-                return self.goals[self.GOAL_PLAYER]
+
+            #TODO definir la estrategia del cambio de meta
+            if self.CC_atiro(perception):
+                return self.goals[self.GOAL_COMMAND_CENTRER]
+            else:
+                if self.player(perception):
+                    return self.goals[self.GOAL_LIFE]
+            
+                if(perception[AgentConsts.HEALTH] < 2 ):
+                    return self.goals[self.GOAL_PLAYER]
         
             
-        return self.goals[self.goal(0)]
+            return self.goals[self.GOAL_COMMAND_CENTRER]
     
     def UpdateGoals(self,goal, goalId):
         self.goals[goalId] = goal

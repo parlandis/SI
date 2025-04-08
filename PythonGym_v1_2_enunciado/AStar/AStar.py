@@ -1,4 +1,5 @@
-
+from MyProblem.BCNode import BCNode
+from MyProblem.BCProblem import BCProblem
 
 #Algoritmo A* genérico que resuelve cualquier problema descrito usando la plantilla de la
 #la calse Problem que tenga como nodos hijos de la clase Node
@@ -19,7 +20,11 @@ class AStar:
         #es que ese sucesor ya está en la frontera de exploración, DEBEMOS MIRAR SI EL NUEVO COSTE ES MENOR QUE EL QUE TENIA ALMACENADO
         #SI esto es asi, hay que cambiarle el padre y setearle el nuevo coste.
 
-        while self.open and not findGoal:
+       
+        print( BCProblem.Initial(self.problem))
+        self.open.append(self.problem.Initial())
+
+        while len(self.open) > 0:
             #sacamos el nodo con menor coste de la frontera de exploración
             node = self.open.pop(0)
             #si es la meta, reconstruimos el path y salimos
@@ -27,6 +32,13 @@ class AStar:
                 findGoal = True
                 path = self.ReconstructPath(node)
                 return path[::-1]
+            
+            self.precessed.add(node)
+
+            
+            neigh = BCProblem.GetSucessors(self.problem, node)
+
+
 
 
 
