@@ -19,43 +19,45 @@ class AStar:
         #GetSucesorInOpen(sucesor) nos devolverá None si no lo encuentra, si lo encuentra
         #es que ese sucesor ya está en la frontera de exploración, DEBEMOS MIRAR SI EL NUEVO COSTE ES MENOR QUE EL QUE TENIA ALMACENADO
         #SI esto es asi, hay que cambiarle el padre y setearle el nuevo coste.
-
-       
-        print( BCProblem.Initial(self.problem))
+        path = []
+        print("Ha llegado hasta A*, generando plan")
+        print(BCProblem.Initial(self.problem))
         self.open.append(self.problem.Initial())
-
+        
         while len(self.open) > 0:
             #sacamos el nodo con menor coste de la frontera de exploración
-            node = self.open.pop(0)
+            node = min(self.open, key=lambda node: BCNode.F(node))
+
             #si es la meta, reconstruimos el path y salimos
             if self.problem.IsASolution(node):
                 findGoal = True
-                path = self.ReconstructPath(node)
-                return path[::-1]
+                return self.ReconstructPath(node)
             
+            self.open.remove(node)
             self.precessed.add(node)
 
             
             neigh = BCProblem.GetSucessors(self.problem, node)
+            
+            print("vecinos: ", len(neigh), neigh)
+            for act in neigh:
+                
+                if self.precessed.__contains__(act):
+                    continue
+                
+                tentative_g = BCNode.G(node) + BCProblem.GetGCost(node, act)
+                
+                if not self.GetSucesorInOpen(act):
+                    self.open.append(act)
+                elif tentative_g >= BCNode.G(act):
+                    continue
+                
+                self._ConfigureNode(act, node, tentative_g)
 
-
-
-
-
-
-
-
-
-
-
-
-        self.open.clear()
-        self.precessed.clear()
-        self.open.append(self.problem.Initial())
-        path = []
+                
         #mientras no encontremos la meta y haya elementos en open....
         #TODO implementar el bucle de búsqueda del algoritmo A*
-        return path
+        return findGoal
 
     #nos permite configurar un nodo (node) con el padre y la nueva G
     def _ConfigureNode(self, node, parent, newG):
@@ -80,6 +82,11 @@ class AStar:
     def ReconstructPath(self, goal):
         path = []
         #TODO: devuelve el path invertido desde la meta hasta que el padre sea None.
+        
+        while goal != None:
+            path.insert(0, goal)
+            goal = BCNode.GetParent(goal)
+
         return path
 
 
