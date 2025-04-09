@@ -31,12 +31,14 @@ class AStar:
             #si es la meta, reconstruimos el path y salimos
             if self.problem.IsASolution(node):
                 findGoal = True
-                return self.ReconstructPath(node)
+                path = self.ReconstructPath(node)
+                path.remove(self.problem.Initial())
+                return path[::-1]
             
             self.open.remove(node)
             self.precessed.add(node)
 
-            
+            print("Estamos en el nodo : ", node)
             neigh = BCProblem.GetSucessors(self.problem, node)
             
             print("vecinos: ", len(neigh), neigh)
@@ -52,6 +54,7 @@ class AStar:
                 elif tentative_g >= BCNode.G(act):
                     continue
                 
+                print("tentative: ", tentative_g)
                 self._ConfigureNode(act, node, tentative_g)
 
                 
@@ -61,8 +64,10 @@ class AStar:
 
     #nos permite configurar un nodo (node) con el padre y la nueva G
     def _ConfigureNode(self, node, parent, newG):
+        
         node.SetParent(parent)
         node.SetG(newG)
+        BCNode.SetH(node, BCProblem.Heuristic(self.problem, node))
         #TODO Setearle la heuristica que está implementada en el problema. (si ya la tenía será la misma pero por si reutilizais este método para otras cosas)
 
     #nos dice si un sucesor está en abierta. Si esta es que ya ha sido expandido y tendrá un coste, comprobar que le nuevo camino no es más eficiente
@@ -84,7 +89,7 @@ class AStar:
         #TODO: devuelve el path invertido desde la meta hasta que el padre sea None.
         
         while goal != None:
-            path.insert(0, goal)
+            path.append( goal)
             goal = BCNode.GetParent(goal)
 
         return path

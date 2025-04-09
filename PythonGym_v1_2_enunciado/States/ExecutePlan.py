@@ -28,14 +28,18 @@ class ExecutePlan(State):
         else:
             self.noMovements = 0
         x,y = BCProblem.WorldToMapCoordFloat(xW,yW,agent.problem.ySize)
+        print("Este son x e y : ", x, y)
         # si estas en el nodo = lo elimino para poder seguir con el siguiente, si me quedo sin nodos, es que he llegado ahora me puede interesar quedarme a 2 nodos.
         plan = agent.GetPlan()
+        print("Este es el plan", plan)
         if len(plan) == 0 : # no tengo un plan para conseguir mis objetivos, me quedo quieto.
             agent.goalMonitor.ForceToRecalculate()
             return AgentConsts.NO_MOVE,False
         
         nextNode = plan[0]
+        print("Este es el nextNode", nextNode)
         if self.IsInNode(nextNode,x,y,self.lastMove,0.17) and len(plan) > 1:
+            print("Esatmos isnode")
             plan.pop(0)
             if len(plan) == 0: # si al llegar al punto ya no hay nada mas que hacer me paro e indico que se recalcule
                 agent.goalMonitor.ForceToRecalculate()
@@ -44,15 +48,19 @@ class ExecutePlan(State):
         goal = agent.problem.GetGoal()
         ## si estoy a distancia 1 del objetivo me paro
         if  len(plan) <= 1 and (goal.value == AgentConsts.PLAYER or goal.value == AgentConsts.COMMAND_CENTER): 
+            print("Atacando")
             self.transition = "Attack"
             move = self.GetDirection(nextNode,x,y)
             agent.directionToLook = move-1 ## la percepción es igual que el movimiento pero restando 1                
             shot = self.lastMove == move and perception[AgentConsts.CAN_FIRE] == 1
         else:
+            print("Estamos moviendo")
             move = self.GetDirection(nextNode,x,y)
+            print("Valor nextNode:", nextNode.value)
             shot = nextNode.value == AgentConsts.BRICK or nextNode.value == AgentConsts.COMMAND_CENTER
         self.lastMove = move
-        return move, shot
+        print("Acciones: ", move, shot )
+        return move + 1, shot
 
     def Transit(self,perception, map):
         if self.transition != None and self.transition != "":

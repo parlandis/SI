@@ -24,7 +24,6 @@ class GoalMonitor:
             return True
         
         if perception[AgentConsts.TIME] - self.lastTime > 5: #si pasa mucho recalculamos 
-            self.UpdateGoals(self.SelectGoal(), )
             return True
         
         if perception[AgentConsts.HEALTH] < 2:

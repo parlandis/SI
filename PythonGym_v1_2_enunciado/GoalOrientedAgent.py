@@ -60,6 +60,7 @@ class GoalOrientedAgent(BaseAgent):
         if self.goalMonitor.NeedReplaning(perception,map,self):
             self.problem.InitMap(map) ## refrescamos el mapa
             self.plan=self._CreatePlan(perception, map)
+            
         return action, shot
     
     #método interno que encapsula la creació nde un plan
@@ -120,7 +121,8 @@ class GoalOrientedAgent(BaseAgent):
         goal2Life = self._CreateLifeGoal(perception)
         goal3Player = self._CreatePlayerGoal(perception)
         inicial = self._CreateInitialNode(perception)
-        self.problem = BCProblem(inicial, goal1CommanCenter, len(map), len(map) )
+        self.problem = BCProblem(inicial, goal1CommanCenter, 1, 1 )
+        print("Longitud mapa", len(map))
         self.problem.InitMap(map)
         self.goalMonitor = GoalMonitor(self.problem,[goal1CommanCenter,goal2Life, goal3Player])
         

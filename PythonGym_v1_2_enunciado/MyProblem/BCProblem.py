@@ -16,12 +16,15 @@ class BCProblem(Problem):
         self.map = np.zeros((xSize,ySize),dtype=int)
         self.xSize = xSize
         self.ySize = ySize
+        print("Xsize, Ysize: ", xSize, ySize)
     
     #inicializa un mapa con el mapa proveniente del entorno Vector => Matriz
     def InitMap(self,m):
         for i in range(len(m)):
             x,y = BCProblem.Vector2MatrixCoord(i,self.xSize,self.ySize)
             self.map[x][y] = m[i]
+
+        
 
     #Muestra el mapa por consola
     def ShowMap(self):
@@ -41,16 +44,15 @@ class BCProblem(Problem):
     def GetSucessors(self, node):
         successors = []
         direcctions = [(0,1), (0, -1), ( 1,0), (-1,0)]  #Las direciones 
-        for dx, dy in direcctions: 
-            nx, ny = node.x + dx , node.y + dy
-            if 0 <= nx < self.xSize and 0 <= ny < self.ySize:    #comprobamos el limite del mapa 
-                valor = self.map[nx][ny]   #VEmos cual es el valor que tenemos delante
-                coste = self.GetCost(valor)  #segun el costre que le hemos dado nsotros
+        
+        self.CreateNode(successors, node, node.x, node.y + 1)
 
-                if coste != sys.maxsize:    #Si no tenemos coste maxino se puede mover uno
-                    successor = BCNode(node, coste, valor, nx, ny)
-                    successors.append(successor)
-        print("Creo que esta todo aqui ")
+        self.CreateNode(successors, node, node.x, node.y - 1)
+        self.CreateNode(successors, node, node.x + 1, node.y)
+        self.CreateNode(successors, node, node.x - 1, node.y)
+
+
+
         return successors
     
     #métodos estáticos
@@ -107,9 +109,9 @@ class BCProblem(Problem):
         if value == AgentConsts.UNBREAKABLE:
             return sys.maxsize
         elif value == AgentConsts.SEMI_UNBREKABLE:
-            return 10
+            return sys.maxsize
         elif value == AgentConsts.SEMI_BREKABLE:
-            return 5
+            return sys.maxsize
         elif value == AgentConsts.NOTHING:    
             return 1
         elif value == AgentConsts.PLAYER:
@@ -117,11 +119,11 @@ class BCProblem(Problem):
         elif value == AgentConsts.COMMAND_CENTER:
             return 1
         elif value == AgentConsts.BRICK:
-            return 1
+            return 2
         elif value == AgentConsts.SHELL:
             return 2
         elif value == AgentConsts.OTHER:
-            return 2
+            return 1
         elif value == AgentConsts.LIFE:
             return 1
 
@@ -134,6 +136,7 @@ class BCProblem(Problem):
         rightNode = BCNode(parent,g,value,x,y)
         rightNode.SetH(self.Heuristic(rightNode))
         successors.append(rightNode)
+        print("valor: ", value)
 
     #Calcula el coste de ir del nodo from al nodo to (Se necesita reimplementar)
     def GetGCost(self, nodeTo):

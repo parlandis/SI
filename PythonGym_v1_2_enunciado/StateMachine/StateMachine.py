@@ -1,5 +1,6 @@
 from StateMachine.State import State
 
+
 class StateMachine(State):
     def __init__(self, id, states, initial):
         super().__init__(id)
@@ -14,6 +15,7 @@ class StateMachine(State):
     #Metodo que se llama en cada actualización del estado
     #devuelve las acciones (actuadores) que el agente realiza
     def Update(self, perception, map, agent):
+        print("PLAN: " , agent.plan)
         actions = self.states[self.curentState].Update(perception, map, agent)
         newState=self.states[self.curentState].Transit(perception, map)
         if newState != self.curentState:
