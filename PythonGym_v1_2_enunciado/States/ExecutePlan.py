@@ -12,6 +12,7 @@ class ExecutePlan(State):
         self.transition = ""
 
     def Start(self,agent):
+        print("[ExecutePlan] Iniciando modo de ejecución de plan")
         self.transition = ""
         self.XPos = -1
         self.YPos = -1
@@ -23,50 +24,76 @@ class ExecutePlan(State):
         xW = perception[AgentConsts.AGENT_X]
         yW = perception[AgentConsts.AGENT_Y]
         distance=abs(self.XPos - xW) + abs(self.YPos - yW)
+
+        bala_dir = None
+        for i in range(4):
+            if perception[i] == AgentConsts.SHELL and perception[i+4] <= 1.5:
+                bala_dir = i
+                break
+        if bala_dir is not None:
+            direction_map = {
+            0: AgentConsts.MOVE_UP,    # Bala arriba
+            1: AgentConsts.MOVE_DOWN,  # Bala abajo
+            2: AgentConsts.MOVE_RIGHT, # Bala derecha
+            3: AgentConsts.MOVE_LEFT   # Bala izquierda
+            }
+            move = direction_map[bala_dir]
+            agent.directionToLook = move - 1 
+
+            print(f"[ExecutePlan]¡Bala detectada en dirección {move}! Disparando...")
+            return move, perception[AgentConsts.CAN_FIRE] == 1 
+
+
         if distance < 0.1 :
             self.noMovements += 1
         else:
             self.noMovements = 0
         x,y = BCProblem.WorldToMapCoordFloat(xW,yW,agent.problem.ySize)
-        print("Este son x e y : ", x, y)
         # si estas en el nodo = lo elimino para poder seguir con el siguiente, si me quedo sin nodos, es que he llegado ahora me puede interesar quedarme a 2 nodos.
+       
+       
         plan = agent.GetPlan()
-        print("Este es el plan", plan)
         if len(plan) == 0 : # no tengo un plan para conseguir mis objetivos, me quedo quieto.
+            print("No tengo plan, me quedo quieto")
             agent.goalMonitor.ForceToRecalculate()
             return AgentConsts.NO_MOVE,False
         
         nextNode = plan[0]
         print("Este es el nextNode", nextNode)
         if self.IsInNode(nextNode,x,y,self.lastMove,0.17) and len(plan) > 1:
-            print("Esatmos isnode")
-            plan.pop(0)
+            print("Estoy en el nodo, lo elimino")
+            plan.pop(0) # elimino el nodo que ya he visitado
             if len(plan) == 0: # si al llegar al punto ya no hay nada mas que hacer me paro e indico que se recalcule
                 agent.goalMonitor.ForceToRecalculate()
                 return AgentConsts.NO_MOVE,False
             nextNode = plan[0]
+            
         goal = agent.problem.GetGoal()
         ## si estoy a distancia 1 del objetivo me paro
+
         if  len(plan) <= 1 and (goal.value == AgentConsts.PLAYER or goal.value == AgentConsts.COMMAND_CENTER): 
             print("Atacando")
             self.transition = "Attack"
             move = self.GetDirection(nextNode,x,y)
             agent.directionToLook = move-1 ## la percepción es igual que el movimiento pero restando 1                
             shot = self.lastMove == move and perception[AgentConsts.CAN_FIRE] == 1
+
         else:
+
             print("Estamos moviendo")
             move = self.GetDirection(nextNode,x,y)
             print("Valor nextNode:", nextNode.value)
-            shot = nextNode.value == AgentConsts.BRICK or nextNode.value == AgentConsts.COMMAND_CENTER
+            shot = nextNode.value == AgentConsts.BRICK or nextNode.value == AgentConsts.COMMAND_CENTER or nextNode.value == AgentConsts.OTHER
+      
         self.lastMove = move
         print("Acciones: ", move, shot )
-        return move + 1, shot
+        return move, shot
 
     def Transit(self,perception, map):
         if self.transition != None and self.transition != "":
             return self.transition
         elif self.noMovements > 5:
-            return "Random"
+            return "RandomMovement"
         return self.id
 
     @staticmethod

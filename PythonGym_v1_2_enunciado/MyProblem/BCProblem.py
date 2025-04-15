@@ -16,7 +16,7 @@ class BCProblem(Problem):
         self.map = np.zeros((xSize,ySize),dtype=int)
         self.xSize = xSize
         self.ySize = ySize
-        print("Xsize, Ysize: ", xSize, ySize)
+        
     
     #inicializa un mapa con el mapa proveniente del entorno Vector => Matriz
     def InitMap(self,m):
@@ -36,7 +36,6 @@ class BCProblem(Problem):
 
     #Calcula la heuristica del nodo en base al problema planteado (Se necesita reimplementar)
     def Heuristic(self, node):
-        #TODO: heurística del nodo
         
         return abs(node.x - self.goal.x) + abs(node.y - self.goal.y)
     
@@ -45,14 +44,12 @@ class BCProblem(Problem):
         successors = []
         direcctions = [(0,1), (0, -1), ( 1,0), (-1,0)]  #Las direciones 
         
-        self.CreateNode(successors, node, node.x, node.y + 1)
-
-        self.CreateNode(successors, node, node.x, node.y - 1)
-        self.CreateNode(successors, node, node.x + 1, node.y)
-        self.CreateNode(successors, node, node.x - 1, node.y)
-
-
-
+        for dx, dy in direcctions:
+            nx = node.x + dx
+            ny = node.y + dy
+            if nx > 0 and nx < self.xSize and ny > 0 and ny < self.ySize:
+                if BCProblem.CanMove(self.map[nx][ny]):
+                    self.CreateNode(successors, node, nx, ny)
         return successors
     
     #métodos estáticos
@@ -113,18 +110,12 @@ class BCProblem(Problem):
         elif value == AgentConsts.SEMI_BREKABLE:
             return sys.maxsize
         elif value == AgentConsts.NOTHING:    
-            return 1
-        elif value == AgentConsts.PLAYER:
-            return 2
+            return 0
         elif value == AgentConsts.COMMAND_CENTER:
             return 1
         elif value == AgentConsts.BRICK:
             return 2
-        elif value == AgentConsts.SHELL:
-            return 2
         elif value == AgentConsts.OTHER:
-            return 1
-        elif value == AgentConsts.LIFE:
             return 1
 
         return sys.maxsize
@@ -136,7 +127,6 @@ class BCProblem(Problem):
         rightNode = BCNode(parent,g,value,x,y)
         rightNode.SetH(self.Heuristic(rightNode))
         successors.append(rightNode)
-        print("valor: ", value)
 
     #Calcula el coste de ir del nodo from al nodo to (Se necesita reimplementar)
     def GetGCost(self, nodeTo):
