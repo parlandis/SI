@@ -12,6 +12,9 @@ class BCNode(Node):
     
     def __repr__(self):
         return f"BCNode(x={self.x}, y={self.y})"
+    
+    def isEqual(self, node):
+        return self.x == node.x and self.y == node.y 
 
     def __eq__(self, other):
         

@@ -108,6 +108,9 @@ class GoalOrientedAgent(BaseAgent):
 
     
     def _CreateLifeGoal(self, perception):
+        if perception[AgentConsts.LIFE_X] == -1:
+            return None
+
         return GoalOrientedAgent.CreateNodeByPerception(perception,AgentConsts.LIFE,AgentConsts.LIFE_X,AgentConsts.LIFE_Y,15)
     
     def _CreateInitialNode(self, perception):

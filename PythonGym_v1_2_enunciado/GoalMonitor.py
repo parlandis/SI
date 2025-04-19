@@ -27,14 +27,16 @@ class GoalMonitor:
         current_time = perception[AgentConsts.TIME]
         time_elapsed = current_time - self.lastTime
 
-        if time_elapsed > 2:
+        if time_elapsed > 4:
             self.lastTime = current_time
             return True
 
         if perception[AgentConsts.TIME] - self.lastTime > 5: #si pasa mucho recalculamos 
             return True
         
-
+        #goal = self.problem.GetGoal()
+        #if goal == self.GOAL_LIFE and perception[AgentConsts.LIFE_X] == -1:
+         #   return True
 
         if perception[AgentConsts.HEALTH] < 3:
             if perception[AgentConsts.LIFE_X] != -1 and perception[AgentConsts.LIFE_Y] != -1:
@@ -56,6 +58,10 @@ class GoalMonitor:
     def SelectGoal(self, perception, map, agent):
         health = perception[AgentConsts.HEALTH]
         player_near = any(perception[i] == AgentConsts.PLAYER for i in range(4))
+        hay_health = perception[AgentConsts.LIFE_X] != -1 and perception[AgentConsts.LIFE_Y] != -1
+
+        if not hay_health:
+            self.goals[self.GOAL_LIFE] = None
 
         if health < 2 and self.goals[self.GOAL_LIFE] is not None:
             return self.goals[self.GOAL_LIFE]

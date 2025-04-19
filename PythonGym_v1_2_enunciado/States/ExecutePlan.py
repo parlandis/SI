@@ -17,6 +17,7 @@ class ExecutePlan(State):
         self.XPos = -1
         self.YPos = -1
         self.noMovements = 0
+        self.lastDistance = 0.0
 
     def Update(self, perception, map, agent):
         shot = False
@@ -43,14 +44,16 @@ class ExecutePlan(State):
             print(f"[ExecutePlan]¡Bala detectada en dirección {move}! Disparando...")
             return move, perception[AgentConsts.CAN_FIRE] == 1 
 
-
-        if distance < 0.1 :
+        print("distancia: ", distance)
+        if distance < 0.1 or distance == self.lastDistance:
+            print("No me he movido, no puedo avanzar")
             self.noMovements += 1
         else:
             self.noMovements = 0
         x,y = BCProblem.WorldToMapCoordFloat(xW,yW,agent.problem.ySize)
         # si estas en el nodo = lo elimino para poder seguir con el siguiente, si me quedo sin nodos, es que he llegado ahora me puede interesar quedarme a 2 nodos.
        
+        self.lastDistance = distance
        
         plan = agent.GetPlan()
         if len(plan) == 0 : # no tengo un plan para conseguir mis objetivos, me quedo quieto.
@@ -71,7 +74,7 @@ class ExecutePlan(State):
         goal = agent.problem.GetGoal()
         ## si estoy a distancia 1 del objetivo me paro
 
-        if  len(plan) <= 1 and (goal.value == AgentConsts.PLAYER or goal.value == AgentConsts.COMMAND_CENTER): 
+        if  len(plan) <= 2 and (goal.value == AgentConsts.PLAYER or goal.value == AgentConsts.COMMAND_CENTER): 
             print("Atacando")
             self.transition = "Attack"
             move = self.GetDirection(nextNode,x,y)
@@ -92,7 +95,7 @@ class ExecutePlan(State):
     def Transit(self,perception, map):
         if self.transition != None and self.transition != "":
             return self.transition
-        elif self.noMovements > 5:
+        elif self.noMovements > 3:
             return "RandomMovement"
         return self.id
 

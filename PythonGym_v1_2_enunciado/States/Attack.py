@@ -21,7 +21,7 @@ class Attack(State):
 
 
     def Update(self, perception, map, agent):
-        # Lógica de búsqueda de objetivo
+  
         if self.target_direction is None:
             self.target_direction = self._CalculateTargetDirection(perception)
             print(f"[Attack] Orientación objetivo: {self.target_direction}")
@@ -42,19 +42,24 @@ class Attack(State):
             agent.directionToLook = move - 1 
 
             print(f"[Attack]¡Bala detectada en dirección {move}! Disparando...")
-            return move, perception[AgentConsts.CAN_FIRE] == 1 
+            return move + 1, perception[AgentConsts.CAN_FIRE] == 1 
 
 
-        # Manejo de obstáculos y disparo
+
         action, shot = self._HandleCombat(perception)
         print(f"[Attack] Acción: {action}, Disparo: {shot}")
-        return action + 1, shot  # Ajustar a índices de acciones
+        return action, shot
 
     def Transit(self, perception, map):
-        # Verificar si el objetivo sigue presente
+        self.target_direction = self._CalculateTargetDirection(perception)
         if perception[self.target_direction] != AgentConsts.PLAYER and \
            perception[self.target_direction] != AgentConsts.COMMAND_CENTER:
-            print("[Attack] Objetivo perdido. Volviendo a ExecutePlan")
+            print("[Attack] Objetivo No en direccion Orientando)")
+        
+
+        jug = any(perception[i] == AgentConsts.PLAYER for i in range(4))
+        if not jug:
+            print("[Attack] Jugador no detectado. Volviendo a ExecutePlan")
             return "ExecutePlan"
         
         if perception[AgentConsts.HEALTH] < 2:
@@ -62,7 +67,6 @@ class Attack(State):
             return "ExecutePlan"
 
         
-        # Verificar obstáculos irrompibles
         if perception[self.target_direction] == AgentConsts.UNBREAKABLE:
             print("[Attack] Obstáculo irrompible detectado")
             return "ExecutePlan"
@@ -70,7 +74,7 @@ class Attack(State):
         return self.id
 
     def _CalculateTargetDirection(self, perception):
-        # Calcular dirección basada en posición del jugador
+        
         dx = perception[AgentConsts.PLAYER_X] - perception[AgentConsts.AGENT_X]
         dy = perception[AgentConsts.PLAYER_Y] - perception[AgentConsts.AGENT_Y]
         
@@ -80,16 +84,16 @@ class Attack(State):
             return AgentConsts.NEIGHBORHOOD_DOWN if dy > 0 else AgentConsts.NEIGHBORHOOD_UP
 
     def _HandleCombat(self, perception):
-        # Lógica de disparo y movimiento
+       
         if perception[self.target_direction] == AgentConsts.PLAYER:
             if perception[AgentConsts.CAN_FIRE] == 1:
                 print("[Attack] ¡Disparando al objetivo!")
-                return AgentConsts.NO_MOVE, True
+                return AgentConsts.NO_MOVE, True           #Si disparamos no nos movemos
             else:
-                print("[Attack] Esperando recarga...")
+                print("[Attack] Esperando recarga...")     #si recargamos debemos movernos?
                 return AgentConsts.NO_MOVE, False
         else:
-            # Moverse hacia el objetivo si hay camino libre
+            
             if perception[self.target_direction + 4] > 1.0:  # Usar distancia de percepción
                 print(f"[Attack] Avanzando hacia objetivo")
                 return self.target_direction, False
