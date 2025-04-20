@@ -8,10 +8,15 @@ class Problem:
         return self.initial
 
     def IsASolution(self, node):
-        return self.goal == node
+        return node == self.goal
 
     #Calcula la heuristica del nodo en base al problema planteado (Se necesita reimplementar)
     def Heuristic(self, node):
+        
+        
+
+
+
         raise NotImplementedError("Heuristic no implementado")
         return 0.0
 

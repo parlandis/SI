@@ -19,7 +19,6 @@ class StateMachine(State):
         actions = self.states[self.curentState].Update(perception, map, agent)
         newState=self.states[self.curentState].Transit(perception, map)
         if newState != self.curentState:
-            print("Cambiamos de estado: ", self.curentState, " a ", newState)
             self.states[self.curentState].End()
             self.curentState=newState
             self.states[self.curentState].Start(agent)
