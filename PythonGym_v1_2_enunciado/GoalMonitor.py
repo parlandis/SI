@@ -27,16 +27,18 @@ class GoalMonitor:
         current_time = perception[AgentConsts.TIME]
         time_elapsed = current_time - self.lastTime
 
-        if time_elapsed > 4:
+        if time_elapsed > 3:
             self.lastTime = current_time
             return True
 
         if perception[AgentConsts.TIME] - self.lastTime > 5: #si pasa mucho recalculamos 
             return True
         
-        #goal = self.problem.GetGoal()
-        #if goal == self.GOAL_LIFE and perception[AgentConsts.LIFE_X] == -1:
-         #   return True
+        goal = agent.problem.GetGoal().value
+
+
+        if goal == AgentConsts.LIFE and perception[AgentConsts.LIFE_X] == -1:
+            return True
 
         if perception[AgentConsts.HEALTH] < 3:
             if perception[AgentConsts.LIFE_X] != -1 and perception[AgentConsts.LIFE_Y] != -1:

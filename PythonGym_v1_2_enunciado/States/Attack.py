@@ -23,7 +23,7 @@ class Attack(State):
     def Update(self, perception, map, agent):
   
         if self.target_direction is None:
-            self.target_direction = self._CalculateTargetDirection(perception)
+            self.target_direction = self.targetDir(perception)
             print(f"[Attack] Orientación objetivo: {self.target_direction}")
 
         bala_dir = None
@@ -46,12 +46,12 @@ class Attack(State):
 
 
 
-        action, shot = self._HandleCombat(perception)
+        action, shot = self.Combate(perception)
         print(f"[Attack] Acción: {action}, Disparo: {shot}")
         return action, shot
 
     def Transit(self, perception, map):
-        self.target_direction = self._CalculateTargetDirection(perception)
+        self.target_direction = self.targetDir(perception)
         if perception[self.target_direction] != AgentConsts.PLAYER and \
            perception[self.target_direction] != AgentConsts.COMMAND_CENTER:
             print("[Attack] Objetivo No en direccion Orientando)")
@@ -73,7 +73,7 @@ class Attack(State):
             
         return self.id
 
-    def _CalculateTargetDirection(self, perception):
+    def targetDir(self, perception):
         
         dx = perception[AgentConsts.PLAYER_X] - perception[AgentConsts.AGENT_X]
         dy = perception[AgentConsts.PLAYER_Y] - perception[AgentConsts.AGENT_Y]
@@ -83,7 +83,7 @@ class Attack(State):
         else:
             return AgentConsts.NEIGHBORHOOD_DOWN if dy > 0 else AgentConsts.NEIGHBORHOOD_UP
 
-    def _HandleCombat(self, perception):
+    def Combate(self, perception):
        
         if perception[self.target_direction] == AgentConsts.PLAYER:
             if perception[AgentConsts.CAN_FIRE] == 1:

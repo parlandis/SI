@@ -42,7 +42,7 @@ class GoalOrientedAgent(BaseAgent):
     #Devuelve la acción u el disparo si o no
     def Update(self, perception, map):
 
-        print("Vida: ", perception[AgentConsts.HEALTH])
+        
 
         if not self.agentInit:
             self.InitAgent(perception,map)

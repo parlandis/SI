@@ -14,12 +14,10 @@ class RandomMovement(State):
 
     def Update(self, perception, map, agent):
         
-        return self.action, True
+        return self.action, False
 
     def Transit(self,perception, map):
         
-        self.updateTime += perception[AgentConsts.TIME]
-        if self.updateTime > 1.0:
-            return "ExecutePlan"
+        return "ExecutePlan"
         return self.id
     
